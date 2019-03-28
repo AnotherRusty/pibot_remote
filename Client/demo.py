@@ -28,5 +28,5 @@ if __name__ == "__main__":
     # 启动连接
     robot.connect()
 
-    while True:
-        pass
+    # 保持连接
+    robot.keep_alive(5)

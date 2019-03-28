@@ -27,6 +27,9 @@ class ParseState:
 class Transport(threading.Thread):
     def __init__(self, addr, client):
         threading.Thread.__init__(self)
+
+        self.__shutdown = False
+        self.__status = True
         
         print('Transport bind to client at ', addr)
         self.addr = addr
@@ -44,13 +47,17 @@ class Transport(threading.Thread):
             auto_feed_thread.setDaemon(True)
             auto_feed_thread.start()
 
-        while True:
+        while not self.__shutdown:
             try:
                 self.parse(self.client.recv(1))
             except:
-                self.client.close()
-                print(self.addr, 'disconnected')
-                break
+                self.__status = False
+
+    def shutdown(self):
+        self.__shutdown = True
+    
+    def check_status(self):
+        return self.__status
 
     def parse(self, c):
         if len(c) == 0: # no data received

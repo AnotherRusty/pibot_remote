@@ -9,6 +9,10 @@ from __future__ import print_function
 from SocketServer import BaseRequestHandler, ThreadingTCPServer
 from Transport import Transport
 import threading
+from time import sleep
+
+
+__CHECK_CONNECTION_INTERVAL = 5 # seconds
 
 
 class Handler(BaseRequestHandler):
@@ -20,8 +24,13 @@ class Handler(BaseRequestHandler):
         transport.setDaemon(True)
         transport.start()
         while True:
-            pass
-
+            if not transport.check_status:
+                transport.shutdown()
+                client.close()
+                print(addr, ' disconnected')
+                break
+            sleep(__CHECK_CONNECTION_INTERVAL)
+            
 
 class Server(threading.Thread):
     def __init__(self, host=None, port=None):

@@ -48,6 +48,14 @@ class Transport():
         self.__socket.connect((self.__host, self.__port))
         print('connected to ', self.__host, ':', self.__port)
         self.__listener.start()
+    
+    ''' API
+        保持连接
+    '''
+    def keep_alive(self, t=5):
+        while True:
+            self.__socket.sendall(bytes(0))
+            sleep(t)
 
     ''' API
         每次收到机器人速度信息会回调callback
