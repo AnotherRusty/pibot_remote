@@ -48,10 +48,7 @@ class Transport(threading.Thread):
             auto_feed_thread.start()
 
         while not self.__shutdown:
-            try:
-                self.parse(self.client.recv(1))
-            except:
-                self.__status = False
+            self.parse(self.client.recv(1))
 
     def shutdown(self):
         self.__shutdown = True
@@ -63,6 +60,7 @@ class Transport(threading.Thread):
         if len(c) == 0: # no data received
             return
         if DEBUG:
+            print(self.state)
             print(repr(c))
         if self.state == ParseState.WAITING_FOR_BOF:
             # reset msg 
@@ -100,7 +98,7 @@ class Transport(threading.Thread):
                 if DEBUG:
                     print('got EOF')
                 # process message
-                if self.process_message(self.msg_id, self.data):
+                self.process_message(self.msg_id, self.data)
             else:
                 if DEBUG:
                     print('EOF error, message discarded')
@@ -115,7 +113,7 @@ class Transport(threading.Thread):
                 print('process msg - get speed')
             msg = RobotManager().get_speed()
             self.respond(msg)
-            return True
+            return
         elif msg_id == MsgId.robot_speed_set:
             if DEBUG:
                 print('process msg - set speed')
@@ -125,13 +123,23 @@ class Transport(threading.Thread):
             vy = msg.vy
             vw = msg.vw
             RobotManager().set_vel(vx, vy, vw)
-            return True
+            return
         elif msg_id == MsgId.robot_pose_get:
             if DEBUG:
                 print('process msg - get pose')
             msg = RobotManager().get_pose()
             self.respond(msg)
-            return True
+            return
+        elif msg_id == MsgId.robot_pose_set:
+            if DEBUG:
+                print('process msg - set pose')
+            msg = MsgRobotPoseSet()
+            self.decode(msg, data)
+            x = msg.x
+            y = msg.y
+            yaw = msg.yaw
+            RobotManager().set_pose(x, y, yaw)
+            return
 
     def respond(self, msg):
         '''send a message back to the paired client'''

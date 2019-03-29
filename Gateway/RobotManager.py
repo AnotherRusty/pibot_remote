@@ -20,7 +20,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist, Pose, PoseWithCovarianceStamped
 from std_srvs.srv import Empty
 from threading import Lock, Thread
-from time import time
+from time import time, sleep
 from sys import exit
 
 
@@ -74,6 +74,8 @@ class RobotManager(object):
             self.rs_debug.start()
         return True
 
+    def spin(self):
+        rospy.spin()
 
     def odom_cb(self, odom):
         self.robot_speed.linear.x = odom.twist.twist.linear.x
@@ -110,7 +112,6 @@ class RobotManager(object):
 
     def rs_update(self):
         '''
-        //Routine//
             Update velocities and pose to robot status
         '''
         interval = 1.0/ROBOT_STATUS_UPDATE_FREQUENCY
@@ -161,7 +162,7 @@ class RobotManager(object):
         cmd = Twist()
         cmd.linear.x = vx
         cmd.linear.y = vy
-        cmd.angular.z = vz
+        cmd.angular.z = vw
         self.cmd_vel_pub.publish(cmd)
     
     def set_pose(self, x, y, yaw):
@@ -177,7 +178,11 @@ class RobotManager(object):
                                 0.0, 0.0, 0.0, 0.0, 0.0, 0.06853891945200942]
         pose.pose.pose.position.x = x
         pose.pose.pose.position.y = y
-        pose.pose.pose.orientation = tf.transformations.quaternion_from_euler(0, 0, yaw)
+        quat = tf.transformations.quaternion_from_euler(0, 0, yaw)
+        pose.pose.pose.orientation.x = quat[0]
+        pose.pose.pose.orientation.y = quat[1]
+        pose.pose.pose.orientation.z = quat[2]
+        pose.pose.pose.orientation.w = quat[3]
         self.init_pose_pub.publish(pose)
         # clear costmap
         rospy.wait_for_service('/move_base/clear_costmaps')
