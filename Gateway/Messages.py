@@ -7,7 +7,6 @@
 '''
 import struct
 from Config import BOF, EOF, DEBUG
-from Utils import int_to_bytes as bytes
 
 
 class MsgId:    # each message type has a unique id

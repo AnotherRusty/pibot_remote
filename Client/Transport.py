@@ -30,6 +30,7 @@ class Transport():
     def __init__(self, host, port):
         self.__host = host
         self.__port = port
+        self.__connected = False
         self.__robot_status = RobotStatus()
         self.__robot_status_lock = Lock()
         self.__speed_feedback_callback = None
@@ -46,13 +47,22 @@ class Transport():
     '''
     def connect(self):
         self.__socket.connect((self.__host, self.__port))
+        self.__connected = True
         print('connected to ', self.__host, ':', self.__port)
         self.__listener.start()
     
     ''' API
+        断开连接
+    '''
+    def disconnect(self):
+        self.__socket.close()
+        self.__connected = False
+
+    ''' API
         保持连接
     '''
     def keep_alive(self, t=5):
+        assert self.__connected, 'No connection. Call connect() first.'
         while True:
             self.__socket.sendall(bytes(0))
             sleep(t)
@@ -73,7 +83,7 @@ class Transport():
         设置机器人运行速度
     '''
     def set_speed(self, vx, vy, vw):
-        msg = MsgRobotPoseSet()
+        msg = MsgRobotSpeedSet()
         msg.vx = vx
         msg.vy = vy
         msg.vw = vw

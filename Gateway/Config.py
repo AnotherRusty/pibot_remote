@@ -1,6 +1,6 @@
 # tcp server
-# HOST = '127.0.0.1'
-HOST = '192.168.11.128'
+HOST = '127.0.0.1'
+# HOST = '192.168.11.128'
 PORT = 8998
 
 # protocol
@@ -18,5 +18,5 @@ ROBOT_STATUS_AUTOFEED = True
 ROBOT_STATUS_AUTOFEED_FREQUENCY = 20    # Hz
 
 # enable/disable debug
-DEBUG = False
+DEBUG = True
 ROBOT_STATUS_DEBUG = False

@@ -1,6 +1,6 @@
 # tcp server
-# HOST = '127.0.0.1'
-HOST = '192.168.11.128'
+HOST = '127.0.0.1'
+# HOST = '192.168.11.128'
 PORT = 8998
 
 # protocol

@@ -100,7 +100,7 @@ class Transport(threading.Thread):
                 if DEBUG:
                     print('got EOF')
                 # process message
-                self.process_message(self.msg_id, self.data)
+                if self.process_message(self.msg_id, self.data):
             else:
                 if DEBUG:
                     print('EOF error, message discarded')
@@ -111,25 +111,34 @@ class Transport(threading.Thread):
         if DEBUG:
             print("[Transport-", self.addr[1], " processing message id: ", msg_id)
         if msg_id == MsgId.robot_speed_get:
-            msg = self.robot_manager.get_speed()
+            if DEBUG:
+                print('process msg - get speed')
+            msg = RobotManager().get_speed()
             self.respond(msg)
-            return
+            return True
         elif msg_id == MsgId.robot_speed_set:
-            msg = MsgRobotPoseSet()
+            if DEBUG:
+                print('process msg - set speed')
+            msg = MsgRobotSpeedSet()
             self.decode(msg, data)
             vx = msg.vx
             vy = msg.vy
             vw = msg.vw
             RobotManager().set_vel(vx, vy, vw)
-            return
+            return True
         elif msg_id == MsgId.robot_pose_get:
-            msg = self.robot_manager.get_pose()
+            if DEBUG:
+                print('process msg - get pose')
+            msg = RobotManager().get_pose()
             self.respond(msg)
-            return
+            return True
 
     def respond(self, msg):
         '''send a message back to the paired client'''
-        self.client.sendall(self.encode(msg))
+        try:
+            self.client.sendall(self.encode(msg))
+        except:
+            self.__status = False
     
     def encode(self, msg):
         ''' encodes a message
@@ -145,8 +154,8 @@ class Transport(threading.Thread):
         data = msg.pack()
         msg_len = bytes(len(data)) 
         b_msg = bof + msg_id + msg_len + data + eof
-        if DEBUG:
-            print(repr(b_msg))
+        # if DEBUG:
+        #     print(repr(b_msg))
         return b_msg
     
     def decode(self, msg, data):

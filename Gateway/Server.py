@@ -12,10 +12,9 @@ import threading
 from time import sleep
 
 
-__CHECK_CONNECTION_INTERVAL = 5 # seconds
-
-
 class Handler(BaseRequestHandler):
+    __CHECK_CONNECTION_INTERVAL = 5 # seconds
+
     def handle(self): # handle function must be overrided
         addr = self.client_address
         client = self.request
@@ -24,12 +23,12 @@ class Handler(BaseRequestHandler):
         transport.setDaemon(True)
         transport.start()
         while True:
-            if not transport.check_status:
+            if not transport.check_status():
                 transport.shutdown()
                 client.close()
                 print(addr, ' disconnected')
                 break
-            sleep(__CHECK_CONNECTION_INTERVAL)
+            sleep(self.__CHECK_CONNECTION_INTERVAL)
             
 
 class Server(threading.Thread):
