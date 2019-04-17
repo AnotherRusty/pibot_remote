@@ -19,6 +19,13 @@ PibotClient::~PibotClient()
 
 }
 
+void PibotClient::register_parser(IParser* parser)
+{
+	m_parser = parser;
+	m_parser->assign_update_pose_address(&pose);
+	m_parser->assign_update_speed_address(&speed);
+}
+
 DWORD WINAPI PibotClient::ThreadFunc(LPVOID p)
 {   
 	char recvbuf[MAX_RECV_BUFF_LEN]={0};
@@ -29,6 +36,7 @@ DWORD WINAPI PibotClient::ThreadFunc(LPVOID p)
 		iResult = recv(client->m_socket, recvbuf, MAX_RECV_BUFF_LEN, 0);
 		if ( iResult > 0 )
 			std::cout << "Bytes received: " << iResult << std::endl;
+			client->mparser->data_recv(recvbuf, iResult);
 		else if ( iResult == 0 )
 			std::cout << "Connection closed" << std::endl;
 		else
@@ -53,7 +61,7 @@ bool PibotClient::init(char* ip, unsigned short port)
 
 	server_in.sin_family = AF_INET;
 	server_in.sin_port = htons(port);
-	server_in.sin_addr.S_un.S_addr = inet_addr(ip); //·þÎñIP
+	server_in.sin_addr.S_un.S_addr = inet_addr(ip); //ï¿½ï¿½ï¿½ï¿½IP
 	m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (m_socket == INVALID_SOCKET) {
 		printf("socket failed with error: %ld\n", WSAGetLastError());
@@ -69,7 +77,7 @@ bool PibotClient::init(char* ip, unsigned short port)
 	}
 
 	DWORD  threadId;
-    m_hThread = CreateThread(NULL, 0, PibotClient::ThreadFunc, this, 0, &threadId); // ´´½¨Ïß³Ì
+    m_hThread = CreateThread(NULL, 0, PibotClient::ThreadFunc, this, 0, &threadId); // ï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½
 
     return true;
 }
@@ -89,11 +97,17 @@ int PibotClient::sendData(const char* data, unsigned int len)
 
 bool PibotClient::getRobotPose(float pose[3])
 {
+	pose[0] = this->pose[0];
+	pose[1] = this->pose[1];
+	pose[2] = this->pose[2];
 	return true;
 }
 
-bool PibotClient::getRobotSpeed(float spped[3])
+bool PibotClient::getRobotSpeed(float speed[3])
 {
+	speed[0] = this->speed[0];
+	speed[1] = this->speed[1];
+	speed[2] = this->speed[2];
     return true;
 }
 
@@ -102,7 +116,7 @@ bool PibotClient::setRobotPose(float pose[3])
     return true;
 }
 
-bool PibotClient::setRobotSpeed(float spped[3])
+bool PibotClient::setRobotSpeed(float speed[3])
 {
     return true;
 }
