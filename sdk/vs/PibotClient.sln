@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PibotClient", "PibotClient.vcproj", "{A752C71F-FE97-4101-A54A-2CE2DDF8ED12}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test.vcproj", "{A48283DF-AA3F-4B20-8744-58B67A734895}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A752C71F-FE97-4101-A54A-2CE2DDF8ED12}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A752C71F-FE97-4101-A54A-2CE2DDF8ED12}.Debug|Win32.Build.0 = Debug|Win32
+		{A752C71F-FE97-4101-A54A-2CE2DDF8ED12}.Release|Win32.ActiveCfg = Release|Win32
+		{A752C71F-FE97-4101-A54A-2CE2DDF8ED12}.Release|Win32.Build.0 = Release|Win32
+		{A48283DF-AA3F-4B20-8744-58B67A734895}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A48283DF-AA3F-4B20-8744-58B67A734895}.Debug|Win32.Build.0 = Debug|Win32
+		{A48283DF-AA3F-4B20-8744-58B67A734895}.Release|Win32.ActiveCfg = Release|Win32
+		{A48283DF-AA3F-4B20-8744-58B67A734895}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

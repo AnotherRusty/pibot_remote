@@ -1,0 +1,5 @@
+LIBRARY	"PibotClient"
+
+EXPORTS 
+CreateClient @ 1
+DestroyClient @ 2

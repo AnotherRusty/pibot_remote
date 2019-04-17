@@ -2,7 +2,7 @@
 #ifndef CLIENT_INTERFACE_H_
 #define CLIENT_INTERFACE_H_
 
-class ClientInterface
+class IClient
 {
 public:
     virtual bool init(char* ip, unsigned short port) = 0;
@@ -14,8 +14,8 @@ public:
     virtual bool setRobotSpeed(float spped[3]) = 0;
 };
 
-ClientInterface* createClient();
+IClient* CreateClient();
 
-void destroyClient(ClientInterface* client);
+void DestroyClient(IClient* client);
 
 #endif
