@@ -1,5 +1,6 @@
 #include "PibotParser.h"
 #include <iostream>
+#include <windows.h>
 
 
 PibotParser::PibotParser()
@@ -12,11 +13,11 @@ PibotParser::~PibotParser()
 
 }
 
-void PibotParser::assign_update_pose_address(float* pose){
+void PibotParser::assign_update_pose_address(Pose* pose){
     pPose = pose;
 }
 
-void PibotParser::assign_update_speed_address(float* speed){
+void PibotParser::assign_update_speed_address(Speed* speed){
     pSpeed = speed;
 }
 
@@ -27,6 +28,13 @@ bool PibotParser::data_recv(char* data, int len){
     return false;
 }
 
+DataToSend* pack_message(Message* msg){
+    //todo
+    
+}
+
+
+/*---------------------------------------*/
 bool PibotParser::parse(char ch){
     std::cout << ch;
     if (_parse_state == WAITING_FOR_BOF){
@@ -68,16 +76,16 @@ bool PibotParser::parse(char ch){
 bool PibotParser::unpack(int id, int len, char* data){
     if (id == robot_pose_res){
         if (len != 3) return false;
-        pPose[0] = data[0];
-        pPose[1] = data[1];
-        pPose[2] = data[2];
+        pPose->x = data[0];
+        pPose->y = data[1];
+        pPose->yaw = data[2];
         return true;
     }
     if (id == robot_speed_res){
         if (len != 3) return false;
-        pSpeed[0] = data[0];
-        pPose[1] = data[1];
-        pPose[2] = data[2];
+        pSpeed->vx = data[0];
+        pSpeed->vy = data[1];
+        pSpeed->vw = data[2];
         return true;
     }
     return false;

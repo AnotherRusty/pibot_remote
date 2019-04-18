@@ -4,7 +4,9 @@
 
 #include "IClient.h"
 #include <winsock2.h>
-#include "IParser.h"
+#include "ITransport.h"
+#include "Messages.h"
+
 
 class PibotClient : public IClient
 {
@@ -21,17 +23,17 @@ public:
     bool setRobotSpeed(float speed[3]);
 	bool recvThread();
 
-    void register_parser(IParser* parser)
+    void register_trans(ITransport* transport)
 
 private:
 	static DWORD WINAPI ThreadFunc(LPVOID p);
 	int sendData(const char* data, unsigned int len);
 private:
-    float pose[3];
-    float speed[3];
+    Pose m_pose;
+    Speed m_speed;
 	HANDLE m_hThread;
 	SOCKET m_socket;
-    IParser* m_parser;
+    ITransport* m_transport;
 };
 
 #endif

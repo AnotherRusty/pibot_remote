@@ -1,4 +1,3 @@
-
 #include "PibotClient.h"
 #include <iostream>
 #include <winsock2.h>
@@ -19,11 +18,11 @@ PibotClient::~PibotClient()
 
 }
 
-void PibotClient::register_parser(IParser* parser)
+void PibotClient::register_trans(ITransport* transport)
 {
-	m_parser = parser;
-	m_parser->assign_update_pose_address(&pose);
-	m_parser->assign_update_speed_address(&speed);
+	m_transport = transport;
+	m_transport->assign_update_pose_address(&m_pose);
+	m_transport->assign_update_speed_address(&m_speed);
 }
 
 DWORD WINAPI PibotClient::ThreadFunc(LPVOID p)
@@ -36,7 +35,7 @@ DWORD WINAPI PibotClient::ThreadFunc(LPVOID p)
 		iResult = recv(client->m_socket, recvbuf, MAX_RECV_BUFF_LEN, 0);
 		if ( iResult > 0 )
 			std::cout << "Bytes received: " << iResult << std::endl;
-			client->mparser->data_recv(recvbuf, iResult);
+			client->m_transport->data_recv(recvbuf, iResult);
 		else if ( iResult == 0 )
 			std::cout << "Connection closed" << std::endl;
 		else
@@ -97,17 +96,17 @@ int PibotClient::sendData(const char* data, unsigned int len)
 
 bool PibotClient::getRobotPose(float pose[3])
 {
-	pose[0] = this->pose[0];
-	pose[1] = this->pose[1];
-	pose[2] = this->pose[2];
+	pose[0] = m_pose->x;
+	pose[1] = m_pose->y;
+	pose[2] = m_pose->yaw;
 	return true;
 }
 
 bool PibotClient::getRobotSpeed(float speed[3])
 {
-	speed[0] = this->speed[0];
-	speed[1] = this->speed[1];
-	speed[2] = this->speed[2];
+	speed[0] = m_speed->vx;
+	speed[1] = m_speed->vy;
+	speed[2] = m_speed->vw;
     return true;
 }
 
