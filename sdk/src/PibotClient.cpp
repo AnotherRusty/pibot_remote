@@ -4,7 +4,7 @@
 #include <windows.h>
 #include <ws2tcpip.h>
 #include "DataStore.h"
-
+#include "Messages.h"
 
 #pragma comment (lib, "Ws2_32.lib")
 
@@ -33,9 +33,10 @@ DWORD WINAPI PibotClient::ThreadFunc(LPVOID p)
 	do {
 		memset(recvbuf, 0, sizeof(recvbuf));
 		iResult = recv(client->m_socket, recvbuf, MAX_RECV_BUFF_LEN, 0);
-		if ( iResult > 0 )
+		if ( iResult > 0 ){
 			std::cout << "Bytes received: " << iResult << std::endl;
 			client->m_transport->data_recv(recvbuf, iResult);
+		}
 		else if ( iResult == 0 )
 			std::cout << "Connection closed" << std::endl;
 		else
@@ -114,12 +115,28 @@ bool PibotClient::getRobotSpeed(float speed[3])
 
 bool PibotClient::setRobotPose(float pose[3])
 {
-    return true;
+	MsgSetPose msg(pose[0], pose[1], pose[2]);
+	char buf[MAX_LEN];
+	unsigned int len;
+	if (m_transport->pack_message(&msg, buf, &len)) 
+	{
+		sendData(buf, len);
+    	return true;
+	}
+	return false;
 }
 
 bool PibotClient::setRobotSpeed(float speed[3])
 {
-    return true;
+	MsgSetSpeed msg(speed[0], speed[1], speed[2]);
+	char buf[MAX_LEN];
+	unsigned int len;
+	if (m_transport->pack_message(&msg, buf, &len)) 
+	{
+		sendData(buf, len);
+    	return true;
+	}
+	return false;
 }
 
 IClient* CreateClient()

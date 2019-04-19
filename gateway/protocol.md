@@ -8,6 +8,8 @@ big-endian
 |:-:|:-:|:-:|:-:|:-:|
 |0x5a   |0-255  |0-255  |   -   | 0x0a  |
 
+max message length 255
+
 ---
 ### Messages
 

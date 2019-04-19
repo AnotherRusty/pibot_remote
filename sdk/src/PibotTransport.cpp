@@ -1,6 +1,7 @@
 #include "PibotTransport.h"
 #include <string.h>
 #include <iostream>
+#include "DataStore.h"
 
 
 PibotTransport::PibotTransport()
@@ -20,7 +21,7 @@ bool PibotTransport::data_recv(char* data, int len){
     return false;
 }
 
-bool PibotTransport::pack_message(Message* msg, char* buf, const unsigned int len){
+bool PibotTransport::pack_message(Message* msg, char* buf, unsigned int& len){
     return msg->pack(buf, len);
 }
 
@@ -67,16 +68,18 @@ bool PibotTransport::parse(char ch){
 bool PibotTransport::unpack(int id, int len, char* data){
     if (id == robot_pose_res){
         if (len != sizeof(Pose)) return false;
-        pPose->x = data[0];
-        pPose->y = data[1];
-        pPose->yaw = data[2];
+        DataStore* ds = DataStore::get();
+        ds->pose.x = data[0];
+        ds->pose.y = data[1];
+        ds->pose.yaw = data[2];
         return true;
     }
     if (id == robot_speed_res){
         if (len != 3) return false;
-        pSpeed->vx = data[0];
-        pSpeed->vy = data[1];
-        pSpeed->vw = data[2];
+        DataStore* ds = DataStore::get();
+        ds->speed.vx = data[0];
+        ds->speed.vy = data[1];
+        ds->speed.vw = data[2];
         return true;
     }
     return false;

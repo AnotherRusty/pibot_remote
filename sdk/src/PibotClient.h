@@ -23,7 +23,7 @@ public:
     bool setRobotSpeed(float speed[3]);
 	bool recvThread();
 
-    void register_trans(ITransport* transport)
+    void register_trans(ITransport* transport);
 
 private:
 	static DWORD WINAPI ThreadFunc(LPVOID p);

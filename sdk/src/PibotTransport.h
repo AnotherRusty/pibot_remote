@@ -23,7 +23,7 @@ public:
     ~PibotTransport();
 
     bool data_recv(char* data, int len);
-    bool pack_message(Message* msg, char* buf, const unsigned int len);
+    bool pack_message(Message* msg, char* buf, unsigned int& len);
 
 private:
     bool parse(char ch);
