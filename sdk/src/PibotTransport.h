@@ -5,8 +5,6 @@
 #include "Messages.h"
 
 
-#define MAX_LEN 256
-
 enum ParseState{
     WAITING_FOR_BOF = 0,
     WAITING_FOR_ID = 2,
