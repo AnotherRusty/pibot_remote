@@ -1,6 +1,8 @@
 #ifndef MESSAGES_H_
 #define MESSAGES_H_
 
+#include "RobotData.h"
+
 #define BOF 0x5a
 #define EOF 0x0a
 #define MAX_LEN 256
@@ -17,29 +19,26 @@ enum MsgId{
     robot_pose_res = 102,
 };
 
-class Message{
-    DataToSend pack()
-}
 
-
-struct DataToSend
+class Message
 {
-    char buf[MAX_LEN];
-    int len;
+public: 
+    virtual bool pack(char* buf, const unsigned int len){
+        return true;
+    };
+
+private:
+    const unsigned char bof = BOF;
+    const unsigned char eof = EOF;
+    const unsigned char id = 0;
 };
 
-struct Pose
+
+class MsgSetSpeed : public Message
 {
-    float x;
-    float y;
-    float yaw;
+public:
+
 };
 
-struct Speed
-{
-    float vx;
-    float vy;
-    float vw;
-};
 
 #endif

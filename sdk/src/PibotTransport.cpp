@@ -1,41 +1,32 @@
-#include "PibotParser.h"
+#include "PibotTransport.h"
+#include <string.h>
 #include <iostream>
-#include <windows.h>
 
 
-PibotParser::PibotParser()
+PibotTransport::PibotTransport()
 {
     _parse_state = WAITING_FOR_BOF;
 }
 
-PibotParser::~PibotParser()
+PibotTransport::~PibotTransport()
 {
 
 }
 
-void PibotParser::assign_update_pose_address(Pose* pose){
-    pPose = pose;
-}
-
-void PibotParser::assign_update_speed_address(Speed* speed){
-    pSpeed = speed;
-}
-
-bool PibotParser::data_recv(char* data, int len){
+bool PibotTransport::data_recv(char* data, int len){
     for (int i=0; i<len; i++){
         if (parse(data[i])) return true;
     }
     return false;
 }
 
-DataToSend* pack_message(Message* msg){
-    //todo
-    
+bool PibotTransport::pack_message(Message* msg, char* buf, const unsigned int len){
+    return msg->pack(buf, len);
 }
 
 
 /*---------------------------------------*/
-bool PibotParser::parse(char ch){
+bool PibotTransport::parse(char ch){
     std::cout << ch;
     if (_parse_state == WAITING_FOR_BOF){
         _id = 0;
@@ -73,9 +64,9 @@ bool PibotParser::parse(char ch){
     }
 }
 
-bool PibotParser::unpack(int id, int len, char* data){
+bool PibotTransport::unpack(int id, int len, char* data){
     if (id == robot_pose_res){
-        if (len != 3) return false;
+        if (len != sizeof(Pose)) return false;
         pPose->x = data[0];
         pPose->y = data[1];
         pPose->yaw = data[2];

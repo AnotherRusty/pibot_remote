@@ -3,6 +3,8 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <ws2tcpip.h>
+#include "DataStore.h"
+
 
 #pragma comment (lib, "Ws2_32.lib")
 
@@ -21,8 +23,6 @@ PibotClient::~PibotClient()
 void PibotClient::register_trans(ITransport* transport)
 {
 	m_transport = transport;
-	m_transport->assign_update_pose_address(&m_pose);
-	m_transport->assign_update_speed_address(&m_speed);
 }
 
 DWORD WINAPI PibotClient::ThreadFunc(LPVOID p)
@@ -96,17 +96,19 @@ int PibotClient::sendData(const char* data, unsigned int len)
 
 bool PibotClient::getRobotPose(float pose[3])
 {
-	pose[0] = m_pose->x;
-	pose[1] = m_pose->y;
-	pose[2] = m_pose->yaw;
+	DataStore* ds = DataStore::get();
+	pose[0] = ds->pose.x;
+	pose[1] = ds->pose.y;
+	pose[2] = ds->pose.yaw;
 	return true;
 }
 
 bool PibotClient::getRobotSpeed(float speed[3])
 {
-	speed[0] = m_speed->vx;
-	speed[1] = m_speed->vy;
-	speed[2] = m_speed->vw;
+	DataStore* ds = DataStore::get();
+	speed[0] = ds->speed.vx;
+	speed[1] = ds->speed.vy;
+	speed[2] = ds->speed.vw;
     return true;
 }
 

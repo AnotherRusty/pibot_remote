@@ -23,9 +23,7 @@ public:
     ~PibotTransport();
 
     bool data_recv(char* data, int len);
-    void assign_update_pose_address(Pose* pose);
-    void assign_update_speed_address(Speed* speed);
-    DataToSend* pack_message(Message* msg);
+    bool pack_message(Message* msg, char* buf, const unsigned int len);
 
 private:
     bool parse(char ch);
@@ -36,8 +34,6 @@ private:
         _len,
         _index;
     char _data[MAX_LEN];
-    Pose* pPose;
-    Speed* pSpeed;
 };
 
 #endif

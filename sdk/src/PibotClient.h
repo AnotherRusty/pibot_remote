@@ -29,8 +29,6 @@ private:
 	static DWORD WINAPI ThreadFunc(LPVOID p);
 	int sendData(const char* data, unsigned int len);
 private:
-    Pose m_pose;
-    Speed m_speed;
 	HANDLE m_hThread;
 	SOCKET m_socket;
     ITransport* m_transport;
