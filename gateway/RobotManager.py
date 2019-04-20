@@ -12,6 +12,11 @@ from __future__ import print_function
     regarding the robot will be done by the robot manager.
 '''
 
+import sys
+sys.path.append("..")
+import pypibot
+from pypibot import log
+from pypibot import roslauncher
 from Config import *
 from RobotStatus import RobotStatus
 import rospy
@@ -22,7 +27,7 @@ from std_srvs.srv import Empty
 from threading import Lock, Thread
 from time import time, sleep
 from sys import exit
-
+from pypibot import roslauncher
 
 class RobotManager(object):
     _instance = None
@@ -38,7 +43,12 @@ class RobotManager(object):
             return
         self.__initialized = True
 
-        print('robot manager init')
+        log.i('robot manager init')
+
+        if LAUNCH_NAVIGATION:
+            self.launch_nav = roslauncher.roslauncher(NAVIGATION_LAUNCH_CMD)
+            self.launch_nav.launch()
+
         self.robot_speed = Twist()  # tempararily stores robot speed
         self.robot_pose = Pose()    # tempararily stores robot pose
 
@@ -59,8 +69,7 @@ class RobotManager(object):
             try:
                 self.tf_listener.waitForTransform('/map', '/base_link', rospy.Time(0), rospy.Duration(3.0))
             except (tf.Exception, tf.ConnectivityException, tf.LookupException) as e:
-                print(e)
-                print('wait for tf transform between /map and /base_link timeout')
+                log.e('wait for tf transform between /map and /base_link timeout %s'%e)
                 return False
 
         # robot status update thread
@@ -90,7 +99,7 @@ class RobotManager(object):
             (trans, rot) = self.tf_listener.lookupTransform('/map', '/base_link', rospy.Time(0))
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             if DEBUG:
-                print('fail to lookup tf transformation. tf error')
+                log.e('fail to lookup tf transformation. tf error')
             return 
 
         self.robot_pose.position.x = trans[0]
@@ -105,8 +114,8 @@ class RobotManager(object):
         while True:
             if time()-now > 1.0:
                 if self.robot_status_lock.acquire():
-                    print('speed - vx:',self.rs.vx, 'vy:', self.rs.vy, 'vw:', self.rs.vw)
-                    print('pose - x:', self.rs.x, 'y:', self.rs.y, 'yaw:', self.rs.yaw)
+                    log.d('speed - vx:',self.rs.vx, 'vy:', self.rs.vy, 'vw:', self.rs.vw)
+                    log.d('pose - x:', self.rs.x, 'y:', self.rs.y, 'yaw:', self.rs.yaw)
                     self.robot_status_lock.release()
                 now = time()
 
@@ -124,6 +133,7 @@ class RobotManager(object):
                     self.rs.vx = self.robot_speed.linear.x
                     self.rs.vy = self.robot_speed.linear.y
                     self.rs.vw = self.robot_speed.angular.z
+
                     # update pose
                     if ROBOT_POSE_TYPE == ABSOLUTE:
                         self.lookup_tf()
@@ -135,26 +145,28 @@ class RobotManager(object):
                     quat = [orientation.x, orientation.y, orientation.z, orientation.w]
                     self.rs.yaw = tf.transformations.euler_from_quaternion(quat)[-1]
                     self.robot_status_lock.release()
+                    
+                    log.t("v=[%f, %f, %f] pos=[%f, %f, %f]" %(self.rs.vx, self.rs.vy, self.rs.vw, self.rs.x, self.rs.y, self.rs.yaw))
                 now = time()
 
     def get_speed(self):
         '''Get the current robot speeds.
         '''
-        if self.robot_status_lock.acquire():
-            vx = self.rs.vx
-            vy = self.rs.vy
-            vw = self.rs.vw
-            self.robot_status_lock.release()
+        self.robot_status_lock.acquire()
+        vx = self.rs.vx
+        vy = self.rs.vy
+        vw = self.rs.vw
+        self.robot_status_lock.release()
         return (vx, vy, vw)
 
     def get_pose(self):
         '''Get the current robot pose.
         '''
-        if self.robot_status_lock.acquire():
-            x = self.rs.x
-            y = self.rs.y
-            yaw = self.rs.yaw
-            self.robot_status_lock.release()
+        self.robot_status_lock.acquire()
+        x = self.rs.x
+        y = self.rs.y
+        yaw = self.rs.yaw
+        self.robot_status_lock.release()
         return (x, y, yaw)
 
     def set_vel(self, vx, vy, vw):

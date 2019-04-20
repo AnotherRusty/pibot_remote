@@ -1,3 +1,7 @@
 .vscode
 *.pyc
 sdk/vs
+*.pdb
+*.exp
+*.suo
+*.ilk

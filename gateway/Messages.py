@@ -49,11 +49,11 @@ class MsgRobotSpeedSet(BasicMessage):
     
     def pack(self):
         data = [self.vx, self.vy, self.vw]
-        p = struct.pack('>3f', *data)
+        p = struct.pack('<3f', *data)
         return p
     
     def unpack(self, data):
-        [self.vx, self.vy, self.vw] = struct.unpack('>3f', data)
+        [self.vx, self.vy, self.vw] = struct.unpack('<3f', data)
 
 
 class MsgRobotPoseGet(BasicMessage):
@@ -73,11 +73,11 @@ class MsgRobotPoseSet(BasicMessage):
 
     def pack(self):
         data = [self.x, self.y, self.yaw]
-        p = struct.pack('>3f', *data)
+        p = struct.pack('<3f', *data)
         return p
 
     def unpack(self, data):
-        [self.x, self.y, self.yaw] = struct.unpack('>3f', data)
+        [self.x, self.y, self.yaw] = struct.unpack('<3f', data)
 
 
 class MsgRobotSpeedRes(BasicMessage):
@@ -91,11 +91,11 @@ class MsgRobotSpeedRes(BasicMessage):
     
     def pack(self):
         data = [self.vx, self.vy, self.vw]
-        p = struct.pack('>3f', *data)
+        p = struct.pack('<3f', *data)
         return p
     
     def unpack(self, data):
-        [self.vx, self.vy, self.vw] = struct.unpack('>3f', data)
+        [self.vx, self.vy, self.vw] = struct.unpack('<3f', data)
 
 
 class MsgRobotPoseRes(BasicMessage):
@@ -109,11 +109,11 @@ class MsgRobotPoseRes(BasicMessage):
 
     def pack(self):
         data = [self.x, self.y, self.yaw]
-        p = struct.pack('>3f', *data)
+        p = struct.pack('<3f', *data)
         return p
     
     def unpack(self, data):
-        [self.x, self.y, self.yaw] = struct.unpack('>3f', data)
+        [self.x, self.y, self.yaw] = struct.unpack('<3f', data)
 
 
     

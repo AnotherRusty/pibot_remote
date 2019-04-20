@@ -16,6 +16,6 @@ public:
 
 IClient* CreateClient();
 
-void DestroyClient(IClient* client);
+void DestroyClient	(IClient* client);
 
 #endif

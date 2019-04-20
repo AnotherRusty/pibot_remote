@@ -61,6 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile="../src/PibotClient.def"
 				GenerateDebugInformation="true"
@@ -180,6 +181,10 @@
 			</File>
 			<File
 				RelativePath="..\src\PibotClient.def"
+				>
+			</File>
+			<File
+				RelativePath="..\src\PibotTransport.cpp"
 				>
 			</File>
 		</Filter>

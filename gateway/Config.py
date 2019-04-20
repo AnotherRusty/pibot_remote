@@ -1,6 +1,5 @@
 # tcp server
-# HOST = '127.0.0.1'
-HOST = '192.168.11.128'
+HOST = '0.0.0.0'
 PORT = 8998
 
 # protocol
@@ -10,7 +9,7 @@ EOF = 0x0a
 # robot status update
 ABSOLUTE = 0    # absolute pose in a map
 RELATIVE = 1    # pose relative to initial place (odom)
-ROBOT_POSE_TYPE = RELATIVE
+ROBOT_POSE_TYPE = ABSOLUTE
 ROBOT_STATUS_UPDATE_FREQUENCY = 10  # Hz
 
 # automatic robot status feedback
@@ -18,5 +17,8 @@ ROBOT_STATUS_AUTOFEED = True
 ROBOT_STATUS_AUTOFEED_FREQUENCY = 20    # Hz
 
 # enable/disable debug
-DEBUG = True
+DEBUG = False
 ROBOT_STATUS_DEBUG = False
+
+LAUNCH_NAVIGATION = True
+NAVIGATION_LAUNCH_CMD = ["roslaunch", "pibot_simulator", "nav.launch"]

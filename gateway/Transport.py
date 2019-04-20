@@ -6,6 +6,10 @@ from __future__ import print_function
 ''' 
 Transport deals with all the messages from/to a client connection. 
 '''
+import sys
+sys.path.append("..")
+import pypibot
+from pypibot import log
 
 from Config import *
 from Messages import *
@@ -31,7 +35,7 @@ class Transport(threading.Thread):
         self.__shutdown = False
         self.__status = True
         
-        print('Transport bind to client at ', addr)
+        log.t('Transport bind to client at %s'%str(addr))
         self.addr = addr
         self.client = client
 
@@ -48,7 +52,10 @@ class Transport(threading.Thread):
             auto_feed_thread.start()
 
         while not self.__shutdown:
-            self.parse(self.client.recv(1))
+            try:
+                self.parse(self.client.recv(1))
+            except:
+                log.w("recv excption")
 
     def shutdown(self):
         self.__shutdown = True
@@ -122,6 +129,7 @@ class Transport(threading.Thread):
             vx = msg.vx
             vy = msg.vy
             vw = msg.vw
+            print(vx, vy, vw)
             RobotManager().set_vel(vx, vy, vw)
             return
         elif msg_id == MsgId.robot_pose_get:

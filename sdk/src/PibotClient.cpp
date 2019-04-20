@@ -5,6 +5,7 @@
 #include <ws2tcpip.h>
 #include "DataStore.h"
 #include "Messages.h"
+#include "PibotTransport.h"
 
 #pragma comment (lib, "Ws2_32.lib")
 
@@ -13,11 +14,13 @@
 PibotClient::PibotClient()
 {
 	m_socket = INVALID_SOCKET;
+	m_transport = new PibotTransport();
 }
 
 PibotClient::~PibotClient()
 {
-
+	if (m_transport)
+		delete m_transport;
 }
 
 void PibotClient::register_trans(ITransport* transport)
@@ -34,7 +37,7 @@ DWORD WINAPI PibotClient::ThreadFunc(LPVOID p)
 		memset(recvbuf, 0, sizeof(recvbuf));
 		iResult = recv(client->m_socket, recvbuf, MAX_RECV_BUFF_LEN, 0);
 		if ( iResult > 0 ){
-			std::cout << "Bytes received: " << iResult << std::endl;
+			//std::cout << "Bytes received: " << iResult << std::endl;
 			client->m_transport->data_recv(recvbuf, iResult);
 		}
 		else if ( iResult == 0 )
@@ -56,28 +59,28 @@ bool PibotClient::init(char* ip, unsigned short port)
 	iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
 	if (iResult != 0) {
 		std::cout << "WSAStartup failed with error:" << iResult << std::endl;
-		return 1;
+		return false;
 	}
 
 	server_in.sin_family = AF_INET;
 	server_in.sin_port = htons(port);
-	server_in.sin_addr.S_un.S_addr = inet_addr(ip); //����IP
+	server_in.sin_addr.S_un.S_addr = inet_addr(ip);
 	m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (m_socket == INVALID_SOCKET) {
 		printf("socket failed with error: %ld\n", WSAGetLastError());
 		WSACleanup();
-		return 1;
+		return false;
 	}
 
 	iResult = connect( m_socket, (struct sockaddr *)&server_in, sizeof(server_in));
 	if (iResult == SOCKET_ERROR) {
 		closesocket(m_socket);
 		m_socket = INVALID_SOCKET;
-		return 1;
+		return false;
 	}
 
 	DWORD  threadId;
-    m_hThread = CreateThread(NULL, 0, PibotClient::ThreadFunc, this, 0, &threadId); // �����߳�
+    m_hThread = CreateThread(NULL, 0, PibotClient::ThreadFunc, this, 0, &threadId);
 
     return true;
 }
@@ -89,7 +92,7 @@ int PibotClient::sendData(const char* data, unsigned int len)
 		std::cout << "send failed with error:"  << WSAGetLastError() << std::endl;
 		closesocket(m_socket);
 		WSACleanup();
-		return 1;
+		return -1;
 	}
 
 	return iResult;
@@ -99,7 +102,7 @@ bool PibotClient::getRobotPose(float pose[3])
 {
 	DataStore* ds = DataStore::get();
 	pose[0] = ds->pose.x;
-	pose[1] = ds->pose.y;
+	pose[1] = ds->pose.y;	
 	pose[2] = ds->pose.yaw;
 	return true;
 }
@@ -116,9 +119,9 @@ bool PibotClient::getRobotSpeed(float speed[3])
 bool PibotClient::setRobotPose(float pose[3])
 {
 	MsgSetPose msg(pose[0], pose[1], pose[2]);
-	char buf[MAX_LEN];
+	char buf[MAX_LEN]={0};
 	unsigned int len;
-	if (m_transport->pack_message(&msg, buf, &len)) 
+	if (m_transport->pack_message(&msg, buf, len)) 
 	{
 		sendData(buf, len);
     	return true;
@@ -129,9 +132,9 @@ bool PibotClient::setRobotPose(float pose[3])
 bool PibotClient::setRobotSpeed(float speed[3])
 {
 	MsgSetSpeed msg(speed[0], speed[1], speed[2]);
-	char buf[MAX_LEN];
+	char buf[MAX_LEN]={0};
 	unsigned int len;
-	if (m_transport->pack_message(&msg, buf, &len)) 
+	if (m_transport->pack_message(&msg, buf, len)) 
 	{
 		sendData(buf, len);
     	return true;
