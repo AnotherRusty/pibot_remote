@@ -13,6 +13,6 @@ until rostopic list | grep -q rosout; do
 done
 
 echo 'start gateway ..'
-cd Gateway
+cd gateway
 ./Gateway.py
 

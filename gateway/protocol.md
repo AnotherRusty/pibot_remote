@@ -2,7 +2,7 @@
 
 bytes
 
-big-endian
+small-endian
 
 | BOF   |   ID  | LEN   | DATA  | EOF   |
 |:-:|:-:|:-:|:-:|:-:|
