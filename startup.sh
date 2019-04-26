@@ -5,6 +5,9 @@ echo 'killing rosmaster/roscore if already exists'
 killall -9 roscore
 killall -9 rosmaster
 
+echo 'killing roslaunch if already exists'
+killall -9 roslaunch
+
 echo 'start roscore ..'
 roscore &
 
@@ -14,5 +17,5 @@ done
 
 echo 'start gateway ..'
 cd gateway
-./Gateway.py
+python Gateway.py
 

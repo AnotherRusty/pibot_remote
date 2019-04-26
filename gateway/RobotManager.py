@@ -67,7 +67,7 @@ class RobotManager(object):
         if ROBOT_POSE_TYPE == ABSOLUTE:
             self.tf_listener = tf.TransformListener()
             try:
-                self.tf_listener.waitForTransform('/map', '/base_link', rospy.Time(0), rospy.Duration(3.0))
+                self.tf_listener.waitForTransform('/map', '/base_link', rospy.Time(0), rospy.Duration(30.0))
             except (tf.Exception, tf.ConnectivityException, tf.LookupException) as e:
                 log.e('wait for tf transform between /map and /base_link timeout %s'%e)
                 return False
