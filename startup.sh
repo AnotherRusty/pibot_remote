@@ -4,7 +4,7 @@ clear
 echo 'killing rosmaster/roscore if already exists'
 killall -9 roscore
 killall -9 rosmaster
-
+killall -9 python
 echo 'killing roslaunch if already exists'
 killall -9 roslaunch
 

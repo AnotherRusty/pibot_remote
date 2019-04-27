@@ -55,7 +55,7 @@ class Transport(threading.Thread):
             try:
                 self.parse(self.client.recv(1))
             except:
-                log.w("recv excption")
+                log.w("recv timeout")
 
     def shutdown(self):
         self.__shutdown = True

@@ -21,4 +21,5 @@ DEBUG = False
 ROBOT_STATUS_DEBUG = False
 
 LAUNCH_NAVIGATION = True
-NAVIGATION_LAUNCH_CMD = ["roslaunch", "pibot_simulator", "nav.launch"]
+#NAVIGATION_LAUNCH_CMD = ["roslaunch", "pibot_simulator", "nav.launch"]
+NAVIGATION_LAUNCH_CMD = ["roslaunch", "pibot_navigation", "nav.launch"]
