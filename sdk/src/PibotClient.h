@@ -14,8 +14,8 @@ public:
     PibotClient();
     ~PibotClient();
     
-    bool init(char* ip, unsigned short port);
-
+    bool init(char* ip, unsigned short port, INotify* notify);
+	bool reconect();
     bool getRobotPose(float pose[3]);
     bool getRobotSpeed(float speed[3]);
 
@@ -32,6 +32,9 @@ private:
 	HANDLE m_hThread;
 	SOCKET m_socket;
     ITransport* m_transport;
+	INotify* m_notify;
+	char m_ip[64];
+	unsigned short m_port;
 };
 
 #endif
