@@ -4,6 +4,7 @@
 #include "ITransport.h"
 #include "Messages.h"
 
+#include "DataStore.h"
 
 enum ParseState{
     WAITING_FOR_BOF = 0,
@@ -17,7 +18,7 @@ enum ParseState{
 class PibotTransport : public ITransport
 {
 public:
-    PibotTransport();
+    PibotTransport(DataStore& ds);
     ~PibotTransport();
 
     bool data_recv(char* data, int len);
@@ -32,6 +33,8 @@ private:
         _len,
         _index;
     char _data[MAX_LEN];
+
+	DataStore& m_ds;
 };
 
 #endif

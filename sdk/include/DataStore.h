@@ -6,12 +6,6 @@
 
 class DataStore{
     public:
-        static DataStore* get(){
-            static DataStore ds;
-            return &ds;
-        }
-    
-    private:
         DataStore(){
             memset(&pose, 0, sizeof(Pose));
             memset(&speed, 0, sizeof(Speed));

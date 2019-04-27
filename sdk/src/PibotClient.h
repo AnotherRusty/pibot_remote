@@ -7,6 +7,7 @@
 #include "ITransport.h"
 #include "Messages.h"
 
+#include "DataStore.h"
 
 class PibotClient : public IClient
 {
@@ -14,7 +15,7 @@ public:
     PibotClient();
     ~PibotClient();
     
-    bool init(char* ip, unsigned short port, INotify* notify);
+    bool init(const char* ip, unsigned short port, INotify* notify);
 	bool reconect();
     bool getRobotPose(float pose[3]);
     bool getRobotSpeed(float speed[3]);
@@ -35,6 +36,7 @@ private:
 	INotify* m_notify;
 	char m_ip[64];
 	unsigned short m_port;
+	DataStore m_ds;
 };
 
 #endif

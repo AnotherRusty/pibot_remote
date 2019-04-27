@@ -1,33 +1,50 @@
-
+#include <string>
 #include <iostream>
 #include "IClient.h"
 #include <windows.h>
+
+#define CLIENT_COUNT 3
+
+IClient* client[CLIENT_COUNT]={0};
+std::string ip[CLIENT_COUNT]={"192.168.2.146","192.168.2.115","192.168.2.247"};
+unsigned short port[CLIENT_COUNT] = {8998, 8998, 8998};
 int main()
 {
-	float a[3]={1,2,3};
 
-	IClient* client1 = CreateClient();
-	if (!client1->init("192.168.2.146", 8998))
+	for (int i=0;i<CLIENT_COUNT;i++)
 	{
-		return 0;
+		client[i] =  CreateClient();
+		if (!client[i]->init(ip[i].c_str(), port[i]))
+		{
+			return 0;
+		}
 	}
 
-	float speed[3]={1,2,3};
-	float pos[3]={4,4,1};
-	//client1->setRobotPose(pos);
-	memset(pos, 0, sizeof(pos));
+	float speed[CLIENT_COUNT]={0};
+	float pos[CLIENT_COUNT]={0};
+	for (int i=0;i<CLIENT_COUNT;i++)
+	{
+		//client[i]->setRobotPose(pos);
+	}
+	//memset(pos, 0, sizeof(pos));
 	while(1)
 	{
-		//client1->setRobotSpeed(speed);
-		client1->getRobotPose(pos);
-		
-		//memset(speed, 0, sizeof(speed));
-		client1->getRobotSpeed(speed);
+		for (int i=0;i<CLIENT_COUNT;i++)
+		{
+			//client[i]->setRobotSpeed(speed);
+			client[i]->getRobotPose(pos);
 
-		std::cout << "speed:" << speed[0] << ", " << speed[1] << ", "  << speed[2] << ", pos: " << pos[0] << ", "  << pos[1] << ", "  << pos[2] << ", "  << std::endl;
+			client[i]->getRobotSpeed(speed);
+
+			std::cout << "robot" << i <<":speed[" << speed[0] << ", " << speed[1] << ", "  << speed[2] << "], pos[" << pos[0] << ", "  << pos[1] << ", "  << pos[2] << "]"  << std::endl;
+		}
+
 		Sleep(100);
 	}
 
-	DestroyClient(client1);
+	for (int i=0;i<CLIENT_COUNT;i++)
+	{
+		DestroyClient(client[i]);
+	}
 	return 0;
 }

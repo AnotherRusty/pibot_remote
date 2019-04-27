@@ -14,7 +14,7 @@
 PibotClient::PibotClient()
 {
 	m_socket = INVALID_SOCKET;
-	m_transport = new PibotTransport();
+	m_transport = new PibotTransport(m_ds);
 }
 
 PibotClient::~PibotClient()
@@ -57,7 +57,7 @@ DWORD WINAPI PibotClient::ThreadFunc(LPVOID p)
 	return 0;
 }
 
-bool PibotClient::init(char* ip, unsigned short port, INotify* notify)
+bool PibotClient::init(const char* ip, unsigned short port, INotify* notify)
 {
 	WSADATA wsaData;
 
@@ -117,19 +117,17 @@ int PibotClient::sendData(const char* data, unsigned int len)
 
 bool PibotClient::getRobotPose(float pose[3])
 {
-	DataStore* ds = DataStore::get();
-	pose[0] = ds->pose.x;
-	pose[1] = ds->pose.y;	
-	pose[2] = ds->pose.yaw;
+	pose[0] = m_ds.pose.x;
+	pose[1] = m_ds.pose.y;	
+	pose[2] = m_ds.pose.yaw;
 	return true;
 }
 
 bool PibotClient::getRobotSpeed(float speed[3])
 {
-	DataStore* ds = DataStore::get();
-	speed[0] = ds->speed.vx;
-	speed[1] = ds->speed.vy;
-	speed[2] = ds->speed.vw;
+	speed[0] = m_ds.speed.vx;
+	speed[1] = m_ds.speed.vy;
+	speed[2] = m_ds.speed.vw;
     return true;
 }
 

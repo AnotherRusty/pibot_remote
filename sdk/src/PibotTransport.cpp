@@ -1,10 +1,9 @@
 #include "PibotTransport.h"
 #include <string.h>
 #include <iostream>
-#include "DataStore.h"
 
 
-PibotTransport::PibotTransport()
+PibotTransport::PibotTransport(DataStore& ds) : m_ds(ds)
 {
     _parse_state = WAITING_FOR_BOF;
 }
@@ -71,12 +70,12 @@ bool PibotTransport::parse(char ch){
 bool PibotTransport::unpack(int id, int len, char* data){
     if (id == ROBOT_POSE_RES){
         if (len != sizeof(Pose)) return false;
-		memcpy(&DataStore::get()->pose, data, len);
+		memcpy(&m_ds.pose, data, len);
         return true;
     }
     if (id == ROBOT_SPEED_RES){
         if (len != sizeof(Speed)) return false;
-		memcpy(&DataStore::get()->speed, data, len);
+		memcpy(&m_ds.speed, data, len);
         return true;
     }
     return false;
