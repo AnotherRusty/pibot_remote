@@ -41,3 +41,37 @@ client文件夹提供了Python实现的demo程序，可对单个机器人进行�
 后者可通过简单的UI界面对机器人速度和位置进行控制。
 
 ### 4.2 sdk (C++)
+
+`sdk`提供一个另一个windows的动态库接口应用于创建`client`用于连接`Server`,可以参考`PibotClientTest.cpp`中的调用
+
+#### 4.2.1 创建实例
+```C
+IClient* CreateClient();
+void DestroyClient	(IClient* client);
+```
+- 通过`CreateClient`函数可以创建一个`IClient`实例
+- `DestroyClient`释放资源
+
+#### 4.2.2 IClient接口
+```C++
+class IClient
+{
+public:
+    virtual bool init(const char* ip, unsigned short port, INotify* notify=0) = 0;
+	virtual bool reconect() = 0;
+    virtual bool getRobotPose(float pose[3]) = 0;
+    virtual bool getRobotSpeed(float speed[3]) = 0;
+
+    virtual bool setRobotPose(float pose[3]) = 0;
+    virtual bool setRobotSpeed(float speed[3]) = 0;
+};
+```
+- `init`：连接至一台机器人`Server`
+> 传入ip，port以及通知接口（如果需要接受通知）
+- `reconect`:重新建立连接
+- `getRobotPose`:获取当前位置信息，x，y，yaw
+- `getRobotSpeed`:获取当前速度信息，vx，vy，vz
+- `setRobotPose`:设置当前位置信息，x，y，yaw
+- `setRobotSpeed`:设置当前速度信息，vx，vy，vz
+
+> vs文件夹提供visual stido 2008的工程
